@@ -22,6 +22,7 @@ exports.insertOne = function(collectionName, json, callback){
 			console.log('数据库连接失败!');
 			return;
 		}
+		//注:db.collection().insertMany();
 		db.collection(collectionName).insertOne(json, function(err,result){
 			callback(err,result);
 			db.close();
@@ -36,6 +37,8 @@ exports.insertOne = function(collectionName, json, callback){
 // 	console.log();
 // });
 
+
+//查找数据
 exports.find = function(collectionName, json, callback){
 	// var result = [];
 	_connect(function(err,db){
@@ -59,13 +62,14 @@ exports.find = function(collectionName, json, callback){
 
 
 //更新数据
-exports.updateOne = function(collectionName, json, callback){
+exports.update = function(collectionName, json, callback){
 	_connect(function(err,db){
 		if(err){
 			console.log('数据库连接失败!');
 			return;
 		}
-		db.collection(collectionName).updateOne(json, function(err,result){
+		//注:此处有类似语法updateOne:只更新一个
+		db.collection(collectionName).updateMany(json, function(err,result){
 			callback(err,result);
 		});
 	});
@@ -80,113 +84,28 @@ exports.updateOne = function(collectionName, json, callback){
 // });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//删除数据,语法有错误
+exports.remove = function(collectionName, json, callback){
+	_connect(function(err,db){
+		if(err){
+			console.log("数据库连接失败!");
+			return;
+		}
+		//注:此处还有类似语法deleteOne:只删除一个
+		db.collection(collectionName).deleteMany(json, function(err,result){
+			callback(err,result);
+		});
+	});
+};
+
+// remove('student',{'sex':'nv'},function(err,result){
+// 	if(err){
+// 		console.log("删除失败!");
+// 		return;
+// 	}
+// 	console.log('删除失败!');
+// 	console.log(result);
+// });
 
 
 
