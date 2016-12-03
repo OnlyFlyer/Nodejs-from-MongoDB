@@ -40,16 +40,24 @@ exports.insertOne = function(collectionName, json, callback){
 
 //查找数据
 exports.find = function(collectionName, json, callback){
-	// var result = [];
+	var json = json || {};
+	 var result = [];  //结果数组
 	_connect(function(err,db){
 		if(err){
 			console.log("连接数据库失败");
 			return;
 		}
-		db.collection(collectionName).find(json).toArray(function(err,result){
-			callback(err,result);
+		var cursor = db.collection(collectionName).find(json);
+		cursor.each(function(err,doc){
+			if(doc != null){
+				result.push(doc);
+			}else{
+				//遍历结束
+				callback(null,result);
+			}
 		});
 	});
+
 };
 // find('student',{'name':'xiaozhang'},function(err,result){
 // 	if(err){
@@ -62,15 +70,16 @@ exports.find = function(collectionName, json, callback){
 
 
 //更新数据
-exports.update = function(collectionName, json, callback){
+exports.update = function(collectionName, json, set, callback){
 	_connect(function(err,db){
 		if(err){
 			console.log('数据库连接失败!');
 			return;
 		}
 		//注:此处有类似语法updateOne:只更新一个
-		db.collection(collectionName).updateMany(json, function(err,result){
+		db.collection(collectionName).updateMany(json,set, function(err,result){
 			callback(err,result);
+			db.close();
 		});
 	});
 };
@@ -94,6 +103,7 @@ exports.remove = function(collectionName, json, callback){
 		//注:此处还有类似语法deleteOne:只删除一个
 		db.collection(collectionName).deleteMany(json, function(err,result){
 			callback(err,result);
+			db.close();
 		});
 	});
 };
@@ -106,6 +116,35 @@ exports.remove = function(collectionName, json, callback){
 // 	console.log('删除失败!');
 // 	console.log(result);
 // });
+
+
+
+//语法有错误
+function create(collectionName, json, callback){
+	_connect(function(err,db){
+		if(err){
+			console.log('数据库连接失败!');
+			return;
+		}
+		db.collection(collectionName).createIndex(json, function(err,result){
+			if(err){
+				console.log('创建失败!');
+				return;
+			}
+			callback(err,result);
+			db.close();
+		});
+	});
+}
+// create('student',{'name':'小刘','sex':'gay'}, function(err,result){
+// 	if(err){
+// 		console.log('创建失败!');
+// 		return;
+// 	}
+// 	console.log('成功!');
+// 	console.log(result);
+// });
+
 
 
 
