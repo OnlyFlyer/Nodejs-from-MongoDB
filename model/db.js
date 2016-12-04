@@ -39,15 +39,16 @@ exports.insertOne = function(collectionName, json, callback){
 
 
 //查找数据
-exports.find = function(collectionName, json, callback){
+exports.find = function(collectionName, json, args, callback){
 	var json = json || {};
-	 var result = [];  //结果数组
+	var result = [];  //结果数组
+	var skipNumber = args.pageAmount * args.page;
 	_connect(function(err,db){
 		if(err){
 			console.log("连接数据库失败");
 			return;
 		}
-		var cursor = db.collection(collectionName).find(json);
+		var cursor = db.collection(collectionName).find(json).limit(args.pageAmount).skip(skipNumber);
 		cursor.each(function(err,doc){
 			if(doc != null){
 				result.push(doc);
