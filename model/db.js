@@ -49,6 +49,7 @@ exports.find = function(collectionName, json, args, callback){
 			return;
 		}
 		var cursor = db.collection(collectionName).find(json).limit(args.pageAmount).skip(skipNumber);
+		//each
 		cursor.each(function(err,doc){
 			if(doc != null){
 				result.push(doc);
